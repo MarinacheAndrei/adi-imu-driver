@@ -18,5 +18,7 @@ target_link_libraries(adi_imudriver_lib
 
 target_include_directories(adi_imudriver_lib
     PUBLIC
-        ${CMAKE_CURRENT_BINARY_DIR}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:include>
 )
