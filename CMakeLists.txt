@@ -73,9 +73,9 @@ add_subdirectory(lib/imu_buf)
 add_subdirectory(include)
 add_subdirectory(linux)
 
-# Examples
-add_executable(imu_test examples/imu_test.c)
-target_link_libraries(imu_test adi_imudriver_lib adi_spibuffer_lib adi_common_lib adi_linux_lib)
+# # Examples
+# add_executable(imu_test examples/imu_test.c)
+# target_link_libraries(imu_test adi_imudriver_lib adi_spibuffer_lib adi_common_lib adi_linux_lib)
 
 set(EXECUTABLE_OUTPUT_PATH
     ${PROJECT_BINARY_DIR}/bin
