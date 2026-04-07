@@ -47,16 +47,14 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH "@loader_path/../lib" "@loader_path")
 endif()
 
+# option(BUILD_TESTS "Build with tests" ON)
+
 #######################
 #  GENERATE BUILD INFO
 #######################
 
 string(TIMESTAMP BUILD_DATETIME "%Y%m%d%H%M%S" UTC)
 #message("-DGIT_HASH=\"${GIT_HASH}-${GIT_DIRTY}\" -DGIT_BRANCH=\"${GIT_BRANCH}\" -DDATETIME=\"${BUILD_DATETIME} UTC\"")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/adi_imu_common.h.in" 
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/adi_imu_common.h" 
-                @ONLY
-            )
 
 # set flags
 set(CMAKE_C_FLAGS "-Wall -ffunction-sections -fdata-sections -Wno-unused-function -Wno-unused-variable")
@@ -66,34 +64,22 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
-include_directories(include/)
+include_directories(
+    ./
+)
 
 add_subdirectory(lib/imu)
 add_subdirectory(lib/imu_buf)
+add_subdirectory(include)
+add_subdirectory(linux)
 
-if(CMAKE_SYSTEM_NAME STREQUAL Linux)
-    add_subdirectory(linux)
-elseif(APPLE)
-    message(WARNING "BUILDING FOR OSX IS ONLY FOR TESTING PURPOSE.\nENSURE SPI LIBRARY IS PROPERLY IMPLEMENTED.\nSEE README.")
-    add_subdirectory(osx)
-else()
-    message(FATAL_ERROR "BUILDING not supported for current platform. Only Linux and OSX supported for now.")
-endif()
-
-install(DIRECTORY include/ DESTINATION include PATTERN "include/*.in" EXCLUDE)
-
+# Examples
 add_executable(imu_test examples/imu_test.c)
-target_link_libraries(imu_test adimu_s adimubuf_s)
-install(TARGETS imu_test DESTINATION bin)
+target_link_libraries(imu_test adi_imudriver_lib adi_spibuffer_lib adi_common_lib adi_linux_lib)
 
-add_executable(spi_test examples/spi_test.c)
-target_link_libraries(spi_test spi_driver m)
-
-add_executable(uart_test examples/uart_test.c)
-target_link_libraries(uart_test uart_driver m)
-
-add_executable(gpio_test examples/gpio_test.c)
-target_link_libraries(gpio_test spi_driver m gpio_driver)
+set(EXECUTABLE_OUTPUT_PATH
+    ${PROJECT_BINARY_DIR}/bin
+)
 
 if(BUILD_TESTING)
 enable_testing()

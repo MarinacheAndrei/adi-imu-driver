@@ -1,25 +1,22 @@
-#/**
-#  * Copyright (c) 2020 Analog Devices, Inc. All Rights Reserved.
-#  * This software is proprietary to Analog Devices, Inc. and its licensors.
-#  *
-#  * Use of this file is governed by the license agreement
-#  * included in this repository.
-#  *
-#  * @file		    CMakeLists.txt
-#  * @author		Sundar Palani (sundar.palani@analog.com)
-#  * @brief 		CMake module for adimubuf library.
-# **/
+set(HEADERS
+    imu_spi_buffer.h
+)
 
-cmake_minimum_required(VERSION 3.5)
+set(SOURCES
+    imu_spi_buffer.c
+)
 
-add_library(adimubuf_s STATIC imu_spi_buffer.c)
-target_include_directories(adimubuf_s PUBLIC .)
-target_link_libraries(adimubuf_s adimu_s hwcomm_s)
+add_library(adi_spibuffer_lib
+    ${SOURCES}
+    ${HEADERS}
+)
 
-add_library(adimubuf SHARED imu_spi_buffer.c)
-target_include_directories(adimubuf PUBLIC .)
-target_link_libraries(adimubuf adimu hwcomm)
-set_target_properties(adimubuf PROPERTIES VERSION "${ADIMU_VERSION_MAJOR}.${ADIMU_VERSION_MINOR}.${ADIMU_VERSION_PATCH}" SOVERSION ${ADIMU_VERSION_MAJOR})
-install(TARGETS adimubuf DESTINATION lib)
-install(TARGETS adimubuf_s DESTINATION lib)
-install(FILES ./imu_spi_buffer.h DESTINATION include)
+target_link_libraries(adi_spibuffer_lib
+    PUBLIC
+        adi_common_lib
+)
+
+target_include_directories(adi_spibuffer_lib
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}
+)

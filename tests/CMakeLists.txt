@@ -13,9 +13,9 @@
 cmake_minimum_required(VERSION 3.0.2)
 
 add_executable(test1 test_imu_buffer_data_seq.c)
-target_link_libraries(test1 adimu adimubuf spi_driver m)
+target_link_libraries(test1 adi_linux_lib adi_common_lib adi_spibuffer_lib adi_imudriver_lib m)
 add_test(test1 test1)
 
 add_executable(test2 test_imu_buffer_data_seq_burst_mode.c)
-target_link_libraries(test2 adimu adimubuf spi_driver m)
+target_link_libraries(test2 adi_linux_lib adi_common_lib adi_spibuffer_lib adi_imudriver_lib m)
 add_test(test2 test2)
