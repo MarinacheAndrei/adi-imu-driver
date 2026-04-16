@@ -1,9 +1,11 @@
 set(HEADERS
     adi_imu_driver.h
+    crc32iso_hdlc.h
 )
 
 set(SOURCES
     adi_imu_driver.c
+    crc32iso_hdlc.c
 )
 
 add_library(adi_imudriver_lib
