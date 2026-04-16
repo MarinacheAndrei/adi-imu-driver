@@ -446,12 +446,13 @@ unsigned long crc32_block(unsigned long crc, const unsigned short data[],
   int i;
   /* cycle through memory */
   for (i = 0; i < n; i++) {
+    uint16_t flipped_byte = IMU_BSWAP_16(data[i]);
     /* Get lower byte */
-    long_c = 0x000000ff & (unsigned long)data[i];
+    long_c = 0x000000ff & (unsigned long)flipped_byte;
     /* Process with CRC */
     crc = ((crc >> 8) & 0x00ffffff) ^ crc_tab32[(crc ^ long_c) & 0xff];
     /* Get upper byte */
-    long_c = 0x000000ff & ((unsigned long)data[i] >> 8);
+    long_c = 0x000000ff & ((unsigned long)flipped_byte >> 8);
     /* Process with CRC */
     crc = ((crc >> 8) & 0x00ffffff) ^ crc_tab32[(crc ^ long_c) & 0xff];
   }
@@ -476,7 +477,7 @@ int adi_imu_ReadBurst(adi_imu_Device_t *pDevice, uint8_t *pBuf,
     if (ret < 0)
       return ret;
     frame = frame + frameOffset;
-    
+
     uint16_t *frame16 = (uint16_t *)frame;
 
     // Compute CRC
