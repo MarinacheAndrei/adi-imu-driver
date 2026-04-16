@@ -11,6 +11,10 @@
  **/
 
 #include "adi_imu_driver.h"
+#include "adi_imu_common.h.in"
+#include "adi_imu_regmap.h"
+#include "crc32iso_hdlc.h"
+#include <stdint.h>
 
 /* Burst read transmit buf */
 static const uint8_t BURST_REQ[MAX_BRF_LEN_BYTES] = {REG_BURST_CMD, 0x00};
@@ -355,6 +359,37 @@ int adi_imu_ReadBurst(adi_imu_Device_t *pDevice, uint8_t *pBuf, uint32_t numBurs
     int ret = Err_imu_Success_e;
     unsigned pPayloadOffset = 0;
     if ((ret = adi_imu_ReadBurstRaw(pDevice, pBuf, numBursts)) < 0) return ret;
+    // Check CRC
+    for (uint32_t i =0; i < numBursts; i++) {
+        uint8_t* frame = pBuf + MAX_BRF_LEN_BYTES * i;
+
+        uint32_t frame_len = MAX_BRF_LEN_BYTES;
+
+        uint32_t data_len = frame_len - 4;
+
+        // Compute CRC
+        uint32_t crc_calc = 0xFFFFFFFF;
+        crc_calc = crc32iso_hdlc_byte(crc_calc, frame, data_len);
+        crc_calc ^= 0xFFFFFFFF;
+
+        uint32_t crc_rx =
+            ((uint32_t)frame[data_len + 0] << 24) |
+            ((uint32_t)frame[data_len + 1] << 16) |
+            ((uint32_t)frame[data_len + 2] << 8)  |
+            ((uint32_t)frame[data_len + 3]);
+
+        printf("Burst %lu | CRC calc: 0x%08lX | CRC recv: 0x%08lX %s\n",
+               (unsigned long)i,
+               (unsigned long)crc_calc,
+               (unsigned long)crc_rx,
+               (crc_calc == crc_rx) ? "OK" : "FAIL");
+
+
+        if (crc_calc != crc_rx)
+        {
+            return Err_imu_CrcError_e; // define this if not present
+        }
+    }
     // Scale and copy data to output
     for (int i=0; i<numBursts; ++i)
         adi_imu_ScaleBurstOut_1(pDevice, pBuf + MAX_BRF_LEN_BYTES * i, IMU_TRUE, IMU_TRUE, &pData[i]);

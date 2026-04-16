@@ -82,6 +82,7 @@ typedef enum {
     Err_imu_UnsupportedProtocol_e = -16,
     Err_uart_ReadTimedout_e = -17,
     Err_imu_deprecated_e = -18,
+    Err_imu_CrcError_e = -19,
 
     // IMU Buffer related error enums
     Err_Imubuf_BufLenOverflow_e = -500,
