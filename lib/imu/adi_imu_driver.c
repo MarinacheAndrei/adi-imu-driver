@@ -490,11 +490,11 @@ int adi_imu_ReadBurst(adi_imu_Device_t *pDevice, uint8_t *pBuf,
     crc_calc ^= 0xFFFFFFFFU;
 
     uint32_t crc_rx = (uint32_t)(IMU_BSWAP_32(*(uint32_t *)(frame + 30)));
-
+#ifdef DEBUG_SPI
     printf("Burst %lu | CRC calc: 0x%08lX | CRC recv: 0x%08lX %s\n",
            (unsigned long)i, (unsigned long)crc_calc, (unsigned long)crc_rx,
            (crc_calc == crc_rx) ? "OK" : "FAIL");
-
+#endif
     if (crc_calc != crc_rx) {
       return Err_imu_CrcError_e; // define this if not present
     }
