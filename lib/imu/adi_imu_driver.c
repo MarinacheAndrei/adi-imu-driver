@@ -361,11 +361,11 @@ int adi_imu_ReadBurst(adi_imu_Device_t *pDevice, uint8_t *pBuf, uint32_t numBurs
     if ((ret = adi_imu_ReadBurstRaw(pDevice, pBuf, numBursts)) < 0) return ret;
     // Check CRC
     for (uint32_t i =0; i < numBursts; i++) {
-        uint8_t* frame = pBuf + MAX_BRF_LEN_BYTES * i;
+        uint8_t* frame = pBuf + MAX_BRF_LEN_BYTES * i + 6;
 
         uint32_t frame_len = MAX_BRF_LEN_BYTES;
 
-        uint32_t data_len = frame_len - 4;
+        uint32_t data_len = frame_len - 4 - 6;
 
         // Compute CRC
         uint32_t crc_calc = 0xFFFFFFFF;
