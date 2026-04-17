@@ -8,6 +8,11 @@ set(SOURCES
     crc32iso_hdlc.c
 )
 
+if(DEBUG_SPI)
+target_compile_definitions(adi_imudriver_lib PRIVATE -DDEBUG_SPI)
+message("DEBUG_SPI ENABLED")
+endif()
+
 add_library(adi_imudriver_lib
     ${SOURCES}
     ${HEADERS}
